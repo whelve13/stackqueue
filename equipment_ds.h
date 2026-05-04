@@ -26,7 +26,8 @@ typedef union
 } OwnerInfo;
 
 // main data
-typedef struct {
+typedef struct
+{
     char regNumber[20];
     char equipmentType[50];
     float pricePerUnit;
@@ -38,19 +39,22 @@ typedef struct {
 } AgriEquipment;
 
 // doubly-linked node
-typedef struct Node {
+typedef struct Node
+{
     AgriEquipment data;
     struct Node* next;
     struct Node* prev;
 } Node;
 
 // stack structure (LIFO)
-typedef struct {
+typedef struct
+{
     Node* top;
 } Stack;
 
 // queue structure (FIFO)
-typedef struct {
+typedef struct
+{
     Node* front;
     Node* rear;
 } Queue;
@@ -70,6 +74,6 @@ void initQueue(Queue* q);
 void enqueue(Queue* q, AgriEquipment data);
 AgriEquipment dequeue(Queue* q);
 
-// ... We will add prototypes for Deque, Circular, Priority, and File I/O next ...
+// need to add prototypes for Deque, Circular, Priority, and File I/O next...
 
 #endif
