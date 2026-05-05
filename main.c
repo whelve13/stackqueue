@@ -127,20 +127,26 @@ int main()
             case 6: // file io
                 printf("\n> SAVE DATA TO FILE\n");
                 printf("Which structure do you want to save?\n");
-                printf("1. Stack\n2. Simple Queue\n3. Deque\n4. Priority Queue\n(Note: Circular Queue requires specialized save logic due to loops)\nChoice: ");
+                printf("1. Stack\n2. Simple Queue\n3. Deque\n4. Circular Queue\n5. Priority Queue\nChoice: ");
                 scanf("%d", &subChoice);
                 
-                Queue tempSaveWrapper; 
-                if (subChoice == 1) tempSaveWrapper.front = myStack.top;
-                else if (subChoice == 2) tempSaveWrapper.front = simpleQ.front;
-                else if (subChoice == 3) tempSaveWrapper.front = dequeQ.front;
-                else if (subChoice == 4) tempSaveWrapper.front = priorityQ.front;
-                else
+                if (subChoice == 4)
                 {
-                    printf("Invalid choice or structure not supported for direct save.\n");
-                    break;
+                    saveCircularQueueToFile(&circularQ);
+                } else
+                {
+                    Queue tempSaveWrapper; 
+                    if (subChoice == 1) tempSaveWrapper.front = myStack.top;
+                    else if (subChoice == 2) tempSaveWrapper.front = simpleQ.front;
+                    else if (subChoice == 3) tempSaveWrapper.front = dequeQ.front;
+                    else if (subChoice == 5) tempSaveWrapper.front = priorityQ.front;
+                    else
+                    {
+                        printf("Invalid choice or structure not supported for direct save.\n");
+                        break;
+                    }
+                    saveQueueToFile(&tempSaveWrapper);
                 }
-                saveQueueToFile(&tempSaveWrapper);
                 break;
 
             case 0: // exit

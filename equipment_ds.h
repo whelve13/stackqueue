@@ -95,5 +95,6 @@ void universalSearch(Node* head);
 
 // io
 void saveQueueToFile(Queue* q);
+void saveCircularQueueToFile(Queue* q);
 
 #endif

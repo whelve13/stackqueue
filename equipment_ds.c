@@ -617,3 +617,87 @@ void universalSearch(Node* head)
         printf("Total matches found: %d\n", matchCount);
     }
 }
+
+// file output for circular queue
+void saveCircularQueueToFile(Queue* q)
+{
+    if (q->front == NULL)
+    {
+        printf("Circular Queue is empty. Nothing to save.\n");
+        return;
+    }
+
+    char filepath[256];
+    int modeChoice;
+
+    printf("\n> File Save Menu (Circular Queue)\n");
+    printf("Enter full file address/name (e.g., C:/data/circ_registry.txt or circ_registry.bin): ");
+    clearInput(); 
+    fgets(filepath, sizeof(filepath), stdin);
+    
+    *(filepath + strcspn(filepath, "\n")) = '\0'; 
+
+    printf("Select Save Mode:\n");
+    printf("1. Text Mode (*.txt)\n");
+    printf("2. Binary Mode (*.bin)\n");
+    printf("Choice: ");
+    scanf("%d", &modeChoice);
+
+    FILE* file;
+    Node* current = q->front;
+
+    if (modeChoice == 1)
+    {
+        // text mode save
+        file = fopen(filepath, "w");
+        if (file == NULL)
+        {
+            printf("Error: Could not create/open file %s\n", filepath);
+            return;
+        }
+
+        do
+        {
+            fprintf(file, "Reg: %s | Type: %s | Price: %.2f | Brand: %s | Color: %s | Date: %02d/%02d/%04d | ",
+                    current->data.regNumber, current->data.equipmentType, current->data.pricePerUnit,
+                    current->data.brand, current->data.color, current->data.lastInspection.day,
+                    current->data.lastInspection.month, current->data.lastInspection.year);
+
+            if (current->data.oType == LEGAL_ENTITY)
+            {
+                fprintf(file, "Owner[Legal]: %s\n", current->data.owner.companyCode);
+            } else
+            {
+                fprintf(file, "Owner[Physical]: %s\n", current->data.owner.personFullName);
+            }
+            current = current->next;
+        } while (current != q->front); // we stop when we circle back to start
+
+        printf("Data successfully saved to Text file: %s\n", filepath);
+
+    } else if (modeChoice == 2)
+    {
+        // binary mode save
+        file = fopen(filepath, "wb");
+        if (file == NULL)
+        {
+            printf("Error: Could not create/open file %s\n", filepath);
+            return;
+        }
+
+        do 
+        {
+            fwrite(&(current->data), sizeof(AgriEquipment), 1, file);
+            current = current->next;
+        } while (current != q->front);
+
+        printf("Data successfully saved to Binary file: %s\n", filepath);
+
+    } else
+    {
+        printf("Invalid save mode selected.\n");
+        return;
+    }
+
+    fclose(file);
+}
