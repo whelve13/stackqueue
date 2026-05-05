@@ -38,42 +38,61 @@ typedef struct
     OwnerInfo owner;        
 } AgriEquipment;
 
-// doubly-linked node
-typedef struct Node
-{
+typedef struct Node {
     AgriEquipment data;
     struct Node* next;
     struct Node* prev;
 } Node;
 
-// stack structure (LIFO)
-typedef struct
-{
+// stack struct (LIFO)
+typedef struct {
     Node* top;
 } Stack;
 
-// queue structure (FIFO)
-typedef struct
-{
+// queue struct (FIFO)
+typedef struct {
     Node* front;
     Node* rear;
 } Queue;
 
 
+// prototypes:
+
 // utility
 AgriEquipment createEquipmentRecord();
 void printEquipmentRecord(AgriEquipment eq);
+void clearInput();
 
-// stack operations
+// stack
 void initStack(Stack* s);
 void push(Stack* s, AgriEquipment data);
 AgriEquipment pop(Stack* s);
+void displayStack(Stack* s);
 
-// queue operations
+// simple queue
 void initQueue(Queue* q);
 void enqueue(Queue* q, AgriEquipment data);
 AgriEquipment dequeue(Queue* q);
+void displayQueue(Queue* q);
 
-// need to add prototypes for Deque, Circular, Priority, and File I/O next...
+// deque
+void insertFrontDeque(Queue* q, AgriEquipment data);
+void insertRearDeque(Queue* q, AgriEquipment data);
+AgriEquipment deleteFrontDeque(Queue* q);
+AgriEquipment deleteRearDeque(Queue* q);
+
+// circular queue
+void enqueueCircular(Queue* q, AgriEquipment data);
+AgriEquipment dequeueCircular(Queue* q);
+void displayCircularQueue(Queue* q);
+
+// priority queue
+void enqueuePriority(Queue* q, AgriEquipment data);
+
+// search
+void universalSearch(Node* head);
+
+// io
+void saveQueueToFile(Queue* q);
 
 #endif

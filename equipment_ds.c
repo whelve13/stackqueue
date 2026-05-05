@@ -421,3 +421,171 @@ void enqueuePriority(Queue* q, AgriEquipment data)
     newNode->prev = current;
     printf("Record inserted into Priority Queue based on price.\n");
 }
+
+// file handling
+void saveQueueToFile(Queue* q)
+{
+    if (q->front == NULL) {
+        printf("Queue is empty. Nothing to save.\n");
+        return;
+    }
+
+    char filepath[256];
+    int modeChoice;
+
+    printf("\n> File Save Menu\n");
+    printf("Enter full file address/name (e.g., C:/data/registry.txt or registry.bin): ");
+    clearInput(); 
+    fgets(filepath, sizeof(filepath), stdin);
+    
+    *(filepath + strcspn(filepath, "\n")) = '\0'; 
+
+    printf("Select Save Mode:\n");
+    printf("1. Text Mode (*.txt)\n");
+    printf("2. Binary Mode (*.bin)\n");
+    printf("Choice: ");
+    scanf("%d", &modeChoice);
+
+    FILE* file;
+    Node* current = q->front;
+
+    if (modeChoice == 1)
+    {
+        // txt mode save
+        file = fopen(filepath, "w");
+        if (file == NULL)
+        {
+            printf("Error: Could not create/open file %s\n", filepath);
+            return;
+        }
+
+        while (current != NULL)
+        {
+            fprintf(file, "Reg: %s | Type: %s | Price: %.2f | Brand: %s | Color: %s | Date: %02d/%02d/%04d | ",
+                    current->data.regNumber, current->data.equipmentType, current->data.pricePerUnit,
+                    current->data.brand, current->data.color, current->data.lastInspection.day,
+                    current->data.lastInspection.month, current->data.lastInspection.year);
+
+            if (current->data.oType == LEGAL_ENTITY)
+            {
+                fprintf(file, "Owner[Legal]: %s\n", current->data.owner.companyCode);
+            } else
+            {
+                fprintf(file, "Owner[Physical]: %s\n", current->data.owner.personFullName);
+            }
+            current = current->next;
+        }
+        printf("Data successfully saved to Text file: %s\n", filepath);
+
+    } else if (modeChoice == 2)
+    {
+        // bin mode save
+        file = fopen(filepath, "wb");
+        if (file == NULL)
+        {
+            printf("Error: Could not create/open file %s\n", filepath);
+            return;
+        }
+
+        while (current != NULL)
+        {
+            fwrite(&(current->data), sizeof(AgriEquipment), 1, file);
+            current = current->next;
+        }
+        printf("Data successfully saved to Binary file: %s\n", filepath);
+
+    } else
+    {
+        printf("Invalid save mode selected.\n");
+        return;
+    }
+
+    fclose(file);
+}
+
+// search
+void universalSearch(Node* head)
+{
+    if (head == NULL) {
+        printf("The structure is empty. Nothing to search.\n");
+        return;
+    }
+
+    int choice;
+    printf("\n> Universal Search\n");
+    printf("1. Registration Number\n");
+    printf("2. Equipment Type (e.g., tractor)\n");
+    printf("3. Price Per Unit\n");
+    printf("4. Brand\n");
+    printf("5. Color\n");
+    printf("6. Inspection Year\n");
+    printf("7. Owner (Company Code or Person Name)\n");
+    printf("Search by parameter: ");
+    scanf("%d", &choice);
+    clearInput();
+
+    char searchStr[100];
+    float searchPrice;
+    int searchYear;
+    int matchCount = 0;
+
+    switch (choice)
+    {
+        case 1: case 2: case 4: case 5: case 7:
+            printf("Enter text to search: ");
+            fgets(searchStr, sizeof(searchStr), stdin);
+            *(searchStr + strcspn(searchStr, "\n")) = '\0';
+            break;
+        case 3:
+            printf("Enter target price: ");
+            scanf("%f", &searchPrice);
+            break;
+        case 6:
+            printf("Enter target inspection year: ");
+            scanf("%d", &searchYear);
+            break;
+        default:
+            printf("Invalid search parameter.\n");
+            return;
+    }
+
+    printf("\n> Search Results\n");
+    Node* current = head;
+    
+    while (current != NULL) {
+        int isMatch = 0;
+
+        switch (choice)
+        {
+            case 1: if (strcmp(current->data.regNumber, searchStr) == 0) isMatch = 1; break;
+            case 2: if (strcmp(current->data.equipmentType, searchStr) == 0) isMatch = 1; break;
+            case 3: if (current->data.pricePerUnit == searchPrice) isMatch = 1; break;
+            case 4: if (strcmp(current->data.brand, searchStr) == 0) isMatch = 1; break;
+            case 5: if (strcmp(current->data.color, searchStr) == 0) isMatch = 1; break;
+            case 6: if (current->data.lastInspection.year == searchYear) isMatch = 1; break;
+            case 7: 
+                if (current->data.oType == LEGAL_ENTITY && strcmp(current->data.owner.companyCode, searchStr) == 0) isMatch = 1;
+                else if (current->data.oType == PHYSICAL_PERSON && strcmp(current->data.owner.personFullName, searchStr) == 0) isMatch = 1;
+                break;
+        }
+
+        if (isMatch)
+        {
+            printEquipmentRecord(current->data);
+            matchCount++;
+        }
+
+        current = current->next;
+        
+        // safety break for circ queue
+        if (current == head) break;
+    }
+
+    if (matchCount == 0)
+    {
+        printf("No records matched your search criteria.\n");
+    } else
+    {
+        printf("Total matches found: %d\n", matchCount);
+    }
+}
