@@ -39,4 +39,4 @@ All structures store a highly detailed Custom Data Type (`AgriEquipment`) repres
 To compile the program using GCC, run this command in your terminal:
 
 ```bash
-gcc main.c equipment_ds.c -o registry_app
+gcc main.c equipment_ds.c -o run.exe
