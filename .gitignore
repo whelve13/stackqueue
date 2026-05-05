@@ -1,0 +1,4 @@
+# we ignore irrelevant files
+*.exe
+*.bin
+*.txt
