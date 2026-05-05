@@ -87,7 +87,8 @@ AgriEquipment dequeueCircular(Queue* q);
 void displayCircularQueue(Queue* q);
 
 // priority queue
-void enqueuePriority(Queue* q, AgriEquipment data);
+int compareEquipment(AgriEquipment newRecord, AgriEquipment existingRecord, int criterion, int ascending);
+void enqueuePriority(Queue* q, AgriEquipment data, int criterion, int ascending);
 
 // search
 void universalSearch(Node* head);

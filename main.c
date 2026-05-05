@@ -11,7 +11,7 @@ void displayMainMenu()
     printf("2. Simple Queue Operations (FIFO)\n");
     printf("3. Double-Ended Queue (Deque) Operations\n");
     printf("4. Circular Queue Operations\n");
-    printf("5. Priority Queue Operations (by Price)\n");
+    printf("5. Priority Queue Operations\n");
     printf("6. File Output / Save Data\n");
     printf("0. Exit Program\n");
     printf("------------------------------------------\n");
@@ -100,13 +100,25 @@ int main()
                 break;
 
             case 5: // priority queue
-                do
-                {
+                do {
                     printf("\n> PRIORITY QUEUE MENU\n");
-                    printf("1. Enqueue (Sorted by Price)\n2. Dequeue (Highest Price)\n3. Display\n4. Search\n0. Back\nChoice: ");
+                    printf("1. Enqueue (Dynamic Priority)\n2. Dequeue (Process Highest Priority)\n3. Display\n4. Search\n0. Back\nChoice: ");
                     scanf("%d", &subChoice);
-                    if (subChoice == 1) enqueuePriority(&priorityQ, createEquipmentRecord());
-                    else if (subChoice == 2) dequeue(&priorityQ); // Normal dequeue takes from front
+                    
+                    if (subChoice == 1)
+                    {
+                        int critChoice, orderChoice;
+                        printf("\nSelect Priority Criterion:\n");
+                        printf("1. Price\n2. Inspection Year\n3. Brand (Alphabetical)\n4. Registration Number\nChoice: ");
+                        scanf("%d", &critChoice);
+                        
+                        printf("Select Order:\n");
+                        printf("1. Ascending (Lowest/A-Z first)\n0. Descending (Highest/Z-A first)\nChoice: ");
+                        scanf("%d", &orderChoice);
+                        
+                        enqueuePriority(&priorityQ, createEquipmentRecord(), critChoice, orderChoice);
+                    }
+                    else if (subChoice == 2) dequeue(&priorityQ); 
                     else if (subChoice == 3) displayQueue(&priorityQ);
                     else if (subChoice == 4) universalSearch(priorityQ.front);
                 } while (subChoice != 0);

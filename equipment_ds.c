@@ -369,7 +369,39 @@ void displayCircularQueue(Queue* q)
 }
 
 // priority queue
-void enqueuePriority(Queue* q, AgriEquipment data)
+int compareEquipment(AgriEquipment newRecord, AgriEquipment existingRecord, int criterion, int ascending)
+{
+    int result = 0;
+    
+    switch (criterion)
+    {
+        case 1: // price
+            if (newRecord.pricePerUnit > existingRecord.pricePerUnit) result = 1;
+            else if (newRecord.pricePerUnit < existingRecord.pricePerUnit) result = -1;
+            break;
+        case 2: // year
+            result = newRecord.lastInspection.year - existingRecord.lastInspection.year;
+            break;
+        case 3: // brand
+            result = strcmp(newRecord.brand, existingRecord.brand);
+            break;
+        case 4: // reg number
+            result = strcmp(newRecord.regNumber, existingRecord.regNumber);
+            break;
+        default:
+            result = 0;
+    }
+
+    if (ascending)
+    {
+        return (result < 0) ? 1 : 0; 
+    } else
+    {
+        return (result > 0) ? 1 : 0; 
+    }
+}
+
+void enqueuePriority(Queue* q, AgriEquipment data, int criterion, int ascending)
 {
     Node* newNode = (Node*)malloc(sizeof(Node));
     if (newNode == NULL)
@@ -381,7 +413,6 @@ void enqueuePriority(Queue* q, AgriEquipment data)
     newNode->next = NULL;
     newNode->prev = NULL;
 
-    // case 1 - queue is empty
     if (q->front == NULL)
     {
         q->front = q->rear = newNode;
@@ -389,8 +420,7 @@ void enqueuePriority(Queue* q, AgriEquipment data)
         return;
     }
 
-    // case 2 - new node has > priority
-    if (data.pricePerUnit > q->front->data.pricePerUnit)
+    if (compareEquipment(data, q->front->data, criterion, ascending))
     {
         newNode->next = q->front;
         q->front->prev = newNode;
@@ -399,27 +429,25 @@ void enqueuePriority(Queue* q, AgriEquipment data)
         return;
     }
 
-    // case 3 - we traverse to find correct sorted pos
     Node* current = q->front;
-    while (current->next != NULL && current->next->data.pricePerUnit >= data.pricePerUnit)
+    
+    while (current->next != NULL && !compareEquipment(data, current->next->data, criterion, ascending))
     {
         current = current->next;
     }
 
-    // we insert after current node
     newNode->next = current->next;
     
     if (current->next != NULL)
     {
-        current->next->prev = newNode; // link next node back to newNode
-    } else
-    {
-        q->rear = newNode; // if inserted at very end, we update rear pointer
+        current->next->prev = newNode; // Link next node back to newNode
+    } else {
+        q->rear = newNode; // if inserted at very end, update rear pointer
     }
     
     current->next = newNode;
     newNode->prev = current;
-    printf("Record inserted into Priority Queue based on price.\n");
+    printf("Record inserted into Priority Queue dynamically.\n");
 }
 
 // file handling
