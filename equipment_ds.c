@@ -367,3 +367,57 @@ void displayCircularQueue(Queue* q)
         current = current->next;
     } while (current != q->front); // stop when we loop back to start
 }
+
+// priority queue
+void enqueuePriority(Queue* q, AgriEquipment data)
+{
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL)
+    {
+        printf("Memory allocation failed!\n");
+        return;
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    newNode->prev = NULL;
+
+    // case 1 - queue is empty
+    if (q->front == NULL)
+    {
+        q->front = q->rear = newNode;
+        printf("Record added as first Priority Queue element.\n");
+        return;
+    }
+
+    // case 2 - new node has > priority
+    if (data.pricePerUnit > q->front->data.pricePerUnit)
+    {
+        newNode->next = q->front;
+        q->front->prev = newNode;
+        q->front = newNode;
+        printf("Record inserted at the front of Priority Queue.\n");
+        return;
+    }
+
+    // case 3 - we traverse to find correct sorted pos
+    Node* current = q->front;
+    while (current->next != NULL && current->next->data.pricePerUnit >= data.pricePerUnit)
+    {
+        current = current->next;
+    }
+
+    // we insert after current node
+    newNode->next = current->next;
+    
+    if (current->next != NULL)
+    {
+        current->next->prev = newNode; // link next node back to newNode
+    } else
+    {
+        q->rear = newNode; // if inserted at very end, we update rear pointer
+    }
+    
+    current->next = newNode;
+    newNode->prev = current;
+    printf("Record inserted into Priority Queue based on price.\n");
+}
